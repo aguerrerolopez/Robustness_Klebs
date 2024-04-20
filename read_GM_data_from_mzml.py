@@ -65,7 +65,10 @@ for id in id_list:
     row = row.iloc[0]
     X_int.append(spectra[id_list.index(id)].intensity)
     X_mz.append(spectra[id_list.index(id)].mz)
-    Y.append(row[antibiotic + ".1"])
+    y_raw = row[antibiotic + ".1"]
+    # subtitute R and I by 1 and S by 0
+    y = 1 if y_raw == "R" or y_raw == "I" else 0
+    Y.append(y)
 
 # Save the data in a pkl
 import pickle
