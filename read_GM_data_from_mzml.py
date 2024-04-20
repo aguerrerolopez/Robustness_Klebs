@@ -4,7 +4,7 @@ from preprocess import SpectrumObject
 import pandas as pd
 
 
-path_folder = "/home/aguerrero@gaps_domain.ssr.upm.es/workspace/projects/K_pneumoniae/data/GM/mzml"
+path_folder = "data/GM/mzml"
 
 # walk through the folder and subfolders and find all .mzml files
 mzml_files = []
@@ -29,8 +29,8 @@ for mzml_file in mzml_files:
             id_list.append(id)
 
 
-path_excel = "/home/aguerrero@gaps_domain.ssr.upm.es/workspace/projects/K_pneumoniae/data/GM/DB_conjunta.xlsx"
-path_GM_AST = "/home/aguerrero@gaps_domain.ssr.upm.es/workspace/projects/K_pneumoniae/data/GM/GM_AST.xlsx"
+path_excel = "data/GM/DB_conjunta.xlsx"
+path_GM_AST = "data/GM/GM_AST.xlsx"
 
 df = pd.read_excel(path_excel)
 

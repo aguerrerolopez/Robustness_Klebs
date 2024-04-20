@@ -4,7 +4,7 @@ from preprocess import SpectrumObject
 import pandas as pd
 
 
-path_folder = "/home/aguerrero@gaps_domain.ssr.upm.es/workspace/projects/K_pneumoniae/data/GM/mzml"
+path_folder = "data/RyC/mzml"
 
 # walk through the folder and subfolders and find all .mzml files
 mzml_files = []
@@ -25,32 +25,26 @@ for mzml_file in mzml_files:
             )
             spectrum = spectrum.preprocess_as_R()
             spectra.append(spectrum)
-            id = mzml_file.split("/")[-1].split(".")[0].split("_")[2]
+            id = mzml_file.split("/")[-1].split(".")[0].split("_")[0:2]
+            # if the first element is a number, then both elements are united with "-", otherwise, they are united with nothing ""
+            if id[0].isdigit():
+                id = "-".join(id)
+            else:
+                id = "".join(id)
             id_list.append(id)
 
 
-path_excel = "/home/aguerrero@gaps_domain.ssr.upm.es/workspace/projects/K_pneumoniae/data/GM/DB_conjunta.xlsx"
-path_GM_AST = "/home/aguerrero@gaps_domain.ssr.upm.es/workspace/projects/K_pneumoniae/data/GM/GM_AST.xlsx"
+path_excel = "data/RyC/DB_conjunta.xlsx"
 
 df = pd.read_excel(path_excel)
 
-df_AST = pd.read_excel(path_GM_AST)
-
-# Match both dataset by Nº Micro on df_AST and Número de muestra in df
-df_AST["Nº Micro"] = df_AST["Nº Micro"].astype(str)
-df["Número de muestra"] = df["Número de muestra"].astype(str)
-
-df_final = df.merge(
-    df_AST, right_on="Nº Micro", left_on="Número de muestra", how="inner"
-)
-
 # Now, get from df_final the ones that match "Nº Espectro" with id_list
-df_final["Nº Espectro"] = df_final["Nº Espectro"].astype(str)
-df_final = df_final[df_final["Nº Espectro"].isin(id_list)]
+df["Número de muestra"] = df["Número de muestra"].astype(str)
+df_final = df[df["Número de muestra"].isin(id_list)]
 
 # Which antibiotic do we want to check? In this case, CEFEPIME.
 antibiotic = "CEFEPIME"
-columns_to_get = ["Nº Espectro", antibiotic, antibiotic + ".1"]
+columns_to_get = ["Número de muestra", antibiotic, antibiotic + ".1"]
 df_final = df_final[columns_to_get]
 
 
@@ -59,7 +53,7 @@ X_int = []
 X_mz = []
 Y = []
 for id in id_list:
-    row = df_final[df_final["Nº Espectro"] == id]
+    row = df_final[df_final["Número de muestra"] == id]
     if row.empty:
         continue
     row = row.iloc[0]
@@ -76,5 +70,5 @@ gm_data = {
     "Y": Y,
 }
 
-with open("gm_data.pkl", "wb") as f:
+with open("ryc_data.pkl", "wb") as f:
     pickle.dump(gm_data, f)
